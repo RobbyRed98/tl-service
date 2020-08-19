@@ -1,0 +1,50 @@
+name: Go
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.13
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+      with:
+        path: go/src/github.com/RobbyRed98/tl-service
+
+    - name: Get dependencies
+      run: |
+        cd go/src/github.com
+        go get -v "github.com/gorilla/mux"
+        go get -v "github.com/gorilla/handlers"
+        sudo apt install tree
+        tree ..
+        echo $(ls github.com) 
+    
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v2
+      with:
+        version: latest
+        args: build --snapshot
+        workdir: go/src/github.com/RobbyRed98/tl-service
+    
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.1.4
+      with:
+        name: artifacts
+        path: |
+          github.com/RobbyRed98/tl-service/dist/tl-service_*.tar.gz
+          github.com/RobbyRed98/tl-service/dist/tl-service_*.deb
+          
