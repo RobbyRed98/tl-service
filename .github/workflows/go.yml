@@ -26,7 +26,7 @@ jobs:
 
     - name: Get dependencies
       run: |
-        cd go/src/github.com
+        echo $PWD
         go get -v "github.com/gorilla/mux"
         go get -v "github.com/gorilla/handlers"
         sudo apt install tree
