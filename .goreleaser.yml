@@ -1,0 +1,25 @@
+# This is an example goreleaser.yaml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm
+      - arm64
+      - 386
+    goarm:
+      - 6
+      - 7
+
+nfpms:
+  -
+    maintainer: Robin Roth <roth-robin@web.de>
+    formats:
+      - deb
+    config_files:
+      "tl-service.service": "/etc/systemd/system/tl-service.service"
+    

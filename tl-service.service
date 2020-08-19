@@ -1,0 +1,8 @@
+[Unit]
+Description=REST-Service which controlles taffic lights by GPIO-pins.
+
+[Service]
+ExecStart=tl-service
+
+[Install]
+WantedBy=multi-user.target

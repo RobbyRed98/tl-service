@@ -1,6 +1,9 @@
 package main
 
 import (
+	"os"
+	"os/signal"
+	"syscall"
 	"github.com/RobbyRed98/tl-service/lights"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -12,6 +15,17 @@ import (
 )
 
 func main() {
+	
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGQUIT)
+	go func() {
+		select{
+		case <-sigs:
+			log.Println("Exiting application.")
+			os.Exit(0)
+		}
+	}()
+
 	log.Println("Starting traffic light controller service...")
 
 	var conf config.TrafficLightConfig
