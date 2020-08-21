@@ -7,45 +7,28 @@ on:
     branches: [ master ]
 
 jobs:
-
+  # This workflow contains a single job called "build"
   build:
-    name: Build
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
 
-    - name: Set up Go 1.x
-      uses: actions/setup-go@v2
+    - name: GoReleaser Action
+      # You may pin to the exact commit or the version.
+      # uses: goreleaser/goreleaser-action@8708f5739924b7f505108288dbb66723d4dfe2ae
+      uses: goreleaser/goreleaser-action@v2.1.1
       with:
-        go-version: ^1.13
-      id: go
+        # Arguments to pass to GoReleaser
+        args: goreleaser release --skip-publish --snapshot --rm-dist
+    - name: Remove dist
+      run: cd dist && rm -rf $(ls | find . -maxdepth 1 -type d -printf '%f\n') || rm config.yaml
 
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
+    # Runs a set of commands using the runners shell
+    - uses: actions/upload-artifact@v2
       with:
-        path: go/src/github.com/RobbyRed98/tl-service
-
-    - name: Get dependencies
-      run: |
-        echo $PWD
-        go get -v "github.com/gorilla/mux"
-        go get -v "github.com/gorilla/handlers"
-        go get -v "github.com/stianeikeland/go-rpio"
-        sudo apt install tree
-        tree ..
-        echo $(ls github.com) 
-    
-    - name: Run GoReleaser
-      uses: goreleaser/goreleaser-action@v2
-      with:
-        version: latest
-        args: build --snapshot
-        workdir: go/src/github.com/RobbyRed98/tl-service
-    
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.1.4
-      with:
-        name: artifacts
-        path: |
-          github.com/RobbyRed98/tl-service/dist/tl-service_*.tar.gz
-          github.com/RobbyRed98/tl-service/dist/tl-service_*.deb
-          
+        name: artifact
+        path: dist/*

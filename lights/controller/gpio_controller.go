@@ -3,7 +3,7 @@ package controller
 import (
 	"log"
 
-	"github.com/stianeikeland/go-rpio"
+	"github.com/stianeikeland/go-rpio/v4"
 )
 
 type GpioController struct {
