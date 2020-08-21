@@ -29,6 +29,7 @@ jobs:
         echo $PWD
         go get -v "github.com/gorilla/mux"
         go get -v "github.com/gorilla/handlers"
+        go get -v "github.com/stianeikeland/go-rpio"
         sudo apt install tree
         tree ..
         echo $(ls github.com) 
