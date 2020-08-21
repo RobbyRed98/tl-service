@@ -2,10 +2,11 @@ package lights
 
 import (
 	"fmt"
-	"github.com/RobbyRed98/tl-service/config"
-	"github.com/RobbyRed98/tl-service/lights/controller"
 	"log"
 	"time"
+
+	"github.com/RobbyRed98/tl-service/config"
+	"github.com/RobbyRed98/tl-service/lights/controller"
 )
 
 const (

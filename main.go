@@ -1,25 +1,26 @@
 package main
 
 import (
+	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"github.com/RobbyRed98/tl-service/lights"
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
-	"log"
-	"net/http"
+
 	"github.com/RobbyRed98/tl-service/config"
 	"github.com/RobbyRed98/tl-service/handler"
+	"github.com/RobbyRed98/tl-service/lights"
 	"github.com/RobbyRed98/tl-service/lights/controller"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	
+
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGQUIT)
 	go func() {
-		select{
+		select {
 		case <-sigs:
 			log.Println("Exiting application.")
 			os.Exit(0)

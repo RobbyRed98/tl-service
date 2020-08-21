@@ -1,36 +1,37 @@
 package handler
 
-import(
+import (
 	"encoding/json"
-	"log"
 	"fmt"
+	"log"
 	"net/http"
+
 	"github.com/RobbyRed98/tl-service/config"
 	"github.com/RobbyRed98/tl-service/lights"
 	"github.com/RobbyRed98/tl-service/lights/controller"
 )
 
 type TrafficLightHandler struct {
-	config *config.TrafficLightConfig
-	channel chan string
-	lightsRunning bool
+	config           *config.TrafficLightConfig
+	channel          chan string
+	lightsRunning    bool
 	lightsController controller.Controller
 }
 
 func NewTrafficLightHandler(conf config.TrafficLightConfig, lightsController controller.Controller) *TrafficLightHandler {
-    t := new(TrafficLightHandler)
+	t := new(TrafficLightHandler)
 	t.config = &conf
 	t.channel = make(chan string)
 	t.lightsRunning = false
 	t.lightsController = lightsController
-    return t
+	return t
 }
 
-func (t* TrafficLightHandler) GetAvailablity(w http.ResponseWriter, r *http.Request) {
+func (t *TrafficLightHandler) GetAvailablity(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<p>Traffic Light Controller is available. (GO)</p>")
 }
 
-func (t* TrafficLightHandler) GetConfig(w http.ResponseWriter, r *http.Request) {
+func (t *TrafficLightHandler) GetConfig(w http.ResponseWriter, r *http.Request) {
 	log.Println(t.config)
 
 	if !t.config.IsValid() {
@@ -43,7 +44,7 @@ func (t* TrafficLightHandler) GetConfig(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusOK)
 }
 
-func (t* TrafficLightHandler) CreateConfig(w http.ResponseWriter, r *http.Request) {
+func (t *TrafficLightHandler) CreateConfig(w http.ResponseWriter, r *http.Request) {
 	var newConfig config.TrafficLightConfig
 	json.NewDecoder(r.Body).Decode(&newConfig)
 	log.Println(newConfig)
@@ -59,11 +60,11 @@ func (t* TrafficLightHandler) CreateConfig(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (t* TrafficLightHandler) GetHeartbeat(w http.ResponseWriter, r *http.Request) {
+func (t *TrafficLightHandler) GetHeartbeat(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (t* TrafficLightHandler) StartTrafficLights(w http.ResponseWriter, r *http.Request) {
+func (t *TrafficLightHandler) StartTrafficLights(w http.ResponseWriter, r *http.Request) {
 	log.Println("Starting traffic lights...")
 	if !t.config.IsValid() {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -83,7 +84,7 @@ func (t* TrafficLightHandler) StartTrafficLights(w http.ResponseWriter, r *http.
 	w.WriteHeader(http.StatusOK)
 }
 
-func (t* TrafficLightHandler) StopTrafficLights(w http.ResponseWriter, r *http.Request) {
+func (t *TrafficLightHandler) StopTrafficLights(w http.ResponseWriter, r *http.Request) {
 	if !t.lightsRunning {
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -95,11 +96,11 @@ func (t* TrafficLightHandler) StopTrafficLights(w http.ResponseWriter, r *http.R
 	}
 
 	log.Println("Stopping traffic lights.")
-	
+
 	w.WriteHeader(http.StatusOK)
 }
 
-func (t* TrafficLightHandler) GetCurrentState(w http.ResponseWriter, r *http.Request) {
+func (t *TrafficLightHandler) GetCurrentState(w http.ResponseWriter, r *http.Request) {
 	if t.lightsRunning {
 		w.WriteHeader(http.StatusOK)
 		return
