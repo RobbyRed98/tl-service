@@ -8,10 +8,9 @@ $ goreleaser release --skip-publish --snapshot --rm-dist
 ```
 
 Creates the following packages:
-* `deb`: arm6 arm7 arm8 i386 amd64
-* `linux.tar.gz`: arm6 arm7 arm8 i386 amd64
-* `windows.tar.gz`: arm6 arm7 arm8 i386 amd64
-* `windows.exe`: arm6 arm7 arm8 i386 amd64
+* `deb`: arm6 arm7 arm8 arm64 i386 amd64
+* `linux.tar.gz`: arm6 arm7 arm8 arm64 i386 amd64
+* `freebsd.tar.gz`: arm6 arm7 arm8 i386 amd64
 
 ## Usage
 
