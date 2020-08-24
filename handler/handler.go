@@ -8,17 +8,18 @@ import (
 
 	"github.com/RobbyRed98/tl-service/config"
 	"github.com/RobbyRed98/tl-service/lights"
-	"github.com/RobbyRed98/tl-service/lights/controller"
 )
 
+// TrafficLightHandler handles the incoming requests and operates the traffic light according to these.
 type TrafficLightHandler struct {
 	config           *config.TrafficLightConfig
 	channel          chan string
 	lightsRunning    bool
-	lightsController controller.Controller
+	lightsController lights.TrafficLight
 }
 
-func NewTrafficLightHandler(conf config.TrafficLightConfig, lightsController controller.Controller) *TrafficLightHandler {
+// NewTrafficLightHandler returns a new TrafficLightHandler
+func NewTrafficLightHandler(conf config.TrafficLightConfig, lightsController lights.TrafficLight) *TrafficLightHandler {
 	t := new(TrafficLightHandler)
 	t.config = &conf
 	t.channel = make(chan string)
@@ -27,10 +28,12 @@ func NewTrafficLightHandler(conf config.TrafficLightConfig, lightsController con
 	return t
 }
 
+// GetAvailablity shows the visual in the browser availablity by responding.
 func (t *TrafficLightHandler) GetAvailablity(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<p>Traffic Light Controller is available. (GO)</p>")
 }
 
+// GetConfig returns the current configuration as JSON.
 func (t *TrafficLightHandler) GetConfig(w http.ResponseWriter, r *http.Request) {
 	log.Println(t.config)
 
@@ -44,6 +47,7 @@ func (t *TrafficLightHandler) GetConfig(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusOK)
 }
 
+// CreateConfig creates or updates the current config used to operate the TrafficLightHandler.
 func (t *TrafficLightHandler) CreateConfig(w http.ResponseWriter, r *http.Request) {
 	var newConfig config.TrafficLightConfig
 	json.NewDecoder(r.Body).Decode(&newConfig)
@@ -60,10 +64,12 @@ func (t *TrafficLightHandler) CreateConfig(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// GetHeartbeat provides a heartbeat signal which ensures the system is running.
 func (t *TrafficLightHandler) GetHeartbeat(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// StartTrafficLights triggers the start of the traffic light.
 func (t *TrafficLightHandler) StartTrafficLights(w http.ResponseWriter, r *http.Request) {
 	log.Println("Starting traffic lights...")
 	if !t.config.IsValid() {
@@ -84,6 +90,7 @@ func (t *TrafficLightHandler) StartTrafficLights(w http.ResponseWriter, r *http.
 	w.WriteHeader(http.StatusOK)
 }
 
+// StopTrafficLights triggers the stop of the traffic light.
 func (t *TrafficLightHandler) StopTrafficLights(w http.ResponseWriter, r *http.Request) {
 	if !t.lightsRunning {
 		w.WriteHeader(http.StatusNoContent)
@@ -100,6 +107,7 @@ func (t *TrafficLightHandler) StopTrafficLights(w http.ResponseWriter, r *http.R
 	w.WriteHeader(http.StatusOK)
 }
 
+// GetCurrentState returns if the traffic light is running.
 func (t *TrafficLightHandler) GetCurrentState(w http.ResponseWriter, r *http.Request) {
 	if t.lightsRunning {
 		w.WriteHeader(http.StatusOK)

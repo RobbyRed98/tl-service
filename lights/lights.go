@@ -6,18 +6,18 @@ import (
 	"time"
 
 	"github.com/RobbyRed98/tl-service/config"
-	"github.com/RobbyRed98/tl-service/lights/controller"
 )
 
 const (
-	Green int = iota
-	Yellow
-	Red
-	YellowRed
-	StartRed
+	green int = iota
+	yellow
+	red
+	yellowRed
+	startRed
 )
 
-func ShowLights(lightsController controller.Controller) {
+// ShowLights turns all traffic lights on for three seconds to show they are functional.
+func ShowLights(lightsController TrafficLight) {
 	lightsController.AllOn()
 	stopChannel := time.Tick(3 * time.Second)
 	select {
@@ -27,49 +27,51 @@ func ShowLights(lightsController controller.Controller) {
 	}
 }
 
+// Stop turns the traffic light off.
 func Stop(channel chan string) {
 	channel <- "stop"
 }
 
-func Start(channel chan string, conf config.TrafficLightConfig, lightsController controller.Controller) {
+// Start turns the traffic light on.
+func Start(channel chan string, conf config.TrafficLightConfig, lightsController TrafficLight) {
 	log.Println(conf)
-	nextState := StartRed
+	nextState := startRed
 	timer := *time.NewTimer(time.Duration(1000000000 * conf.RandRed()))
 	for {
 		select {
 		case <-timer.C:
 			switch nextState {
-			case StartRed:
+			case startRed:
 				lightsController.RedOn()
-				nextState = YellowRed
+				nextState = yellowRed
 				timeout, _ := time.ParseDuration(fmt.Sprintf("%ds", conf.RandRed()))
 				timer.Reset(timeout)
 				break
-			case Red:
+			case red:
 				lightsController.YellowOff()
 				lightsController.RedOn()
-				nextState = YellowRed
+				nextState = yellowRed
 				timeout, _ := time.ParseDuration(fmt.Sprintf("%ds", conf.RandRed()))
 				timer.Reset(timeout)
 				break
-			case YellowRed:
+			case yellowRed:
 				lightsController.RedOff()
 				lightsController.YellowRedOn()
-				nextState = Green
+				nextState = green
 				timeout, _ := time.ParseDuration(fmt.Sprintf("%ds", conf.YellowRed))
 				timer.Reset(timeout)
 				break
-			case Green:
+			case green:
 				lightsController.YellowRedOff()
 				lightsController.GreenOn()
-				nextState = Yellow
+				nextState = yellow
 				timeout, _ := time.ParseDuration(fmt.Sprintf("%ds", conf.Green))
 				timer.Reset(timeout)
 				break
-			case Yellow:
+			case yellow:
 				lightsController.GreenOff()
 				lightsController.YellowOn()
-				nextState = Red
+				nextState = red
 				timeout, _ := time.ParseDuration(fmt.Sprintf("%ds", conf.Yellow))
 				timer.Reset(timeout)
 				break

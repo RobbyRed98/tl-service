@@ -12,13 +12,11 @@ import (
 	"github.com/RobbyRed98/tl-service/config"
 	"github.com/RobbyRed98/tl-service/handler"
 	"github.com/RobbyRed98/tl-service/lights"
-	"github.com/RobbyRed98/tl-service/lights/controller"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
 func main() {
-
 	host := flag.String("ip", "localhost", "The host address to run the tl-service on.")
 	port := flag.Int("port", 8080, "The port to run the tl-service on.")
 	green := flag.Int("green", 20, "GPIO the green light is connected to.")
@@ -41,7 +39,7 @@ func main() {
 	log.Println("Starting traffic light controller service...")
 
 	var conf config.TrafficLightConfig
-	aController := controller.NewController(*typeValue, *green, *yellow, *red)
+	aController := lights.NewTrafficLight(*typeValue, *green, *yellow, *red)
 	handler := handler.NewTrafficLightHandler(conf, aController)
 	router := mux.NewRouter()
 
