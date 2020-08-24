@@ -12,3 +12,16 @@ type Controller interface {
 	YellowRedOff()
 	AllOff()
 }
+
+func NewController(controllerType string, greenPin int, yellowPin int, redPin int) Controller {
+	switch controllerType {
+	case "demo":
+		return DemoController{}
+	case "negated":
+		return NewNegatedGpioController(greenPin, yellowPin, redPin)
+	case "classic":
+		return NewGpioController(greenPin, yellowPin, redPin)
+	default:
+		return DemoController{}
+	}
+}

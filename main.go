@@ -21,6 +21,10 @@ func main() {
 
 	host := flag.String("ip", "localhost", "The host address to run the tl-service on.")
 	port := flag.Int("port", 8080, "The port to run the tl-service on.")
+	green := flag.Int("green", 20, "GPIO the green light is connected to.")
+	yellow := flag.Int("yellow", 21, "GPIO the yellow light is connected to.")
+	red := flag.Int("red", 20, "GPIO the red light is connected to.")
+	typeValue := flag.String("type", "demo", "The controller type to use. (demo|classic|negated)")
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGQUIT)
@@ -32,10 +36,12 @@ func main() {
 		}
 	}()
 
+	flag.Parse()
+
 	log.Println("Starting traffic light controller service...")
 
 	var conf config.TrafficLightConfig
-	aController := controller.DemoController{}
+	aController := controller.NewController(*typeValue, *green, *yellow, *red)
 	handler := handler.NewTrafficLightHandler(conf, aController)
 	router := mux.NewRouter()
 
@@ -48,5 +54,5 @@ func main() {
 	router.HandleFunc("/stop", handler.StopTrafficLights).Methods("GET")
 	router.HandleFunc("/running", handler.GetCurrentState).Methods("GET")
 	router.HandleFunc("/config", handler.CreateConfig).Methods("POST")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", *host, port), handlers.CORS()(router)))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", *host, *port), handlers.CORS()(router)))
 }

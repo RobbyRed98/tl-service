@@ -12,7 +12,7 @@ type GpioController struct {
 	red    rpio.Pin
 }
 
-func NewGpioController(greenPinId int8, yellowPinId int8, redPinId int8) *GpioController {
+func NewGpioController(greenPinId int, yellowPinId int, redPinId int) *GpioController {
 	err := rpio.Open()
 	if err != nil {
 		log.Println("Cannot allocate RAM for GPIOs.")

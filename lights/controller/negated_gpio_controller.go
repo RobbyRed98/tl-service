@@ -8,7 +8,7 @@ type NegatedGpioController struct {
 	gpioController GpioController
 }
 
-func NewNegatedGpioController(greenPinId int8, yellowPinId int8, redPinId int8) *NegatedGpioController {
+func NewNegatedGpioController(greenPinId int, yellowPinId int, redPinId int) *NegatedGpioController {
 	n := new(NegatedGpioController)
 	n.gpioController = *NewGpioController(greenPinId, yellowPinId, redPinId)
 	return n
