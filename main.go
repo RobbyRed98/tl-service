@@ -22,7 +22,7 @@ func main() {
 	green := flag.Int("green", 20, "GPIO the green light is connected to.")
 	yellow := flag.Int("yellow", 21, "GPIO the yellow light is connected to.")
 	red := flag.Int("red", 20, "GPIO the red light is connected to.")
-	typeValue := flag.String("type", "demo", "The controller type to use. (demo|classic|negated)")
+	typeValue := flag.String("type", lights.Demo, "The controller type to use. (demo|classic|negated)")
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGQUIT)
@@ -45,12 +45,12 @@ func main() {
 
 	lights.ShowLights(aController)
 
-	router.HandleFunc("/", handler.GetAvailablity).Methods("GET")
-	router.HandleFunc("/heartbeat", handler.GetHeartbeat).Methods("GET")
-	router.HandleFunc("/config", handler.GetConfig).Methods("GET")
-	router.HandleFunc("/start", handler.StartTrafficLights).Methods("GET")
-	router.HandleFunc("/stop", handler.StopTrafficLights).Methods("GET")
-	router.HandleFunc("/running", handler.GetCurrentState).Methods("GET")
-	router.HandleFunc("/config", handler.CreateConfig).Methods("POST")
+	router.HandleFunc("/", handler.Availablity).Methods("GET")
+	router.HandleFunc("/heartbeat", handler.Heartbeat).Methods("GET")
+	router.HandleFunc("/config", handler.Config).Methods("GET")
+	router.HandleFunc("/start", handler.StartTrafficLight).Methods("GET")
+	router.HandleFunc("/stop", handler.StopTrafficLight).Methods("GET")
+	router.HandleFunc("/running", handler.CurrentState).Methods("GET")
+	router.HandleFunc("/config", handler.UpdateConfig).Methods("POST")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", *host, *port), handlers.CORS()(router)))
 }

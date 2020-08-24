@@ -34,7 +34,6 @@ $ service tl-service start
 ```
 
 ### Windows
-
 ```powershell
 tl-service_<x.y.z>.exe
 ```
